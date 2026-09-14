@@ -1,0 +1,11 @@
+target/
+*.class
+
+.idea/
+*.iws
+*.iml
+*.ipr
+
+.DS_Store
+
+*.log
