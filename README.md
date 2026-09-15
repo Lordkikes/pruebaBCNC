@@ -49,4 +49,4 @@ Respuesta:
 ./mvnw test
 ```
 
-> Pendiente: añadir los 5 tests de integración del enunciado (14/06 10:00, 14/06 16:00, 14/06 21:00, 15/06 10:00, 16/06 21:00).
+Incluye los 5 tests de integración exigidos por el enunciado (`PriceControllerIntegrationTest`), uno por cada franja horaria: 14/06 10:00, 14/06 16:00, 14/06 21:00, 15/06 10:00 y 16/06 21:00.
