@@ -43,6 +43,58 @@ Respuesta:
 }
 ```
 
+## Manejo de errores
+
+El endpoint valida `brandId`, `productId` y `applicationDate`. Cualquier fallo de validación o de formato devuelve un `ProblemDetail` (RFC 7807), nunca un 500.
+
+### Fecha/hora inválida (formato incorrecto)
+
+`applicationDate` debe ir en formato ISO-8601 (`yyyy-MM-dd'T'HH:mm:ss`, p. ej. `2020-06-14T10:00:00`). Si no lo cumple, se devuelve **400 Bad Request**:
+
+```bash
+curl "http://localhost:8080/api/v1/prices?brandId=1&productId=35455&applicationDate=14-06-2020"
+```
+
+```json
+{
+  "type": "about:blank",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "Failed to convert 'applicationDate' with value: '14-06-2020'",
+  "instance": "/api/v1/prices"
+}
+```
+
+Si falta cualquiera de los tres parámetros (`brandId`, `productId` o `applicationDate`), la respuesta es igualmente **400 Bad Request**.
+
+### Identificadores no válidos (`brandId`/`productId` ≤ 0)
+
+```json
+{
+  "type": "about:blank",
+  "title": "Parámetros de entrada inválidos",
+  "status": 400,
+  "detail": "getApplicablePrice.brandId: debe ser mayor que 0",
+  "instance": "/api/v1/prices"
+}
+```
+
+### Sin tarifa aplicable
+
+Parámetros válidos pero sin ninguna tarifa que cubra esa fecha/producto/cadena → **404 Not Found**:
+
+```json
+{
+  "type": "about:blank",
+  "title": "Tarifa no encontrada",
+  "status": 404,
+  "detail": "No existe tarifa aplicable para brandId=999, productId=35455 en la fecha 2020-06-14T10:00",
+  "instance": "/api/v1/prices"
+}
+```
+
+Ver los casos cubiertos en [`PriceControllerValidationTest`](src/test/java/com/bcnc/prices/infrastructure/adapter/in/web/PriceControllerValidationTest.java).
+
 ## Tests
 
 ```bash
