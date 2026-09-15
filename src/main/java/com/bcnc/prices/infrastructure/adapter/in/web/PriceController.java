@@ -3,6 +3,7 @@ package com.bcnc.prices.infrastructure.adapter.in.web;
 import com.bcnc.prices.domain.port.in.GetApplicablePriceUseCase;
 import com.bcnc.prices.infrastructure.adapter.in.web.dto.PriceResponse;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +24,8 @@ public class PriceController {
 
     @GetMapping("/api/v1/prices")
     public PriceResponse getApplicablePrice(
-            @RequestParam("brandId") @NotNull Long brandId,
-            @RequestParam("productId") @NotNull Long productId,
+            @RequestParam("brandId") @NotNull @Positive Long brandId,
+            @RequestParam("productId") @NotNull @Positive Long productId,
             @RequestParam("applicationDate")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @NotNull LocalDateTime applicationDate
     ) {
