@@ -102,3 +102,18 @@ Ver los casos cubiertos en [`PriceControllerValidationTest`](src/test/java/com/b
 ```
 
 Incluye los 5 tests de integración exigidos por el enunciado (`PriceControllerIntegrationTest`), uno por cada franja horaria: 14/06 10:00, 14/06 16:00, 14/06 21:00, 15/06 10:00 y 16/06 21:00.
+
+## Colección Postman
+
+En [`postman/BCNC-Prices-Service.postman_collection.json`](postman/BCNC-Prices-Service.postman_collection.json) hay una colección con la misma suite de pruebas, para verificar el servicio manualmente o con [newman](https://www.npmjs.com/package/newman):
+
+- **Enunciado - 5 casos**: los mismos 5 escenarios de `PriceControllerIntegrationTest`, cada uno con asserts sobre `priceList`, `price` y `currency`.
+- **Validación de parámetros y errores**: parámetros ausentes, `brandId`/`productId` no positivos, fecha con formato inválido (400) y sin tarifa aplicable (404).
+
+Con la aplicación arrancada (`./mvnw spring-boot:run`):
+
+```bash
+npx newman run postman/BCNC-Prices-Service.postman_collection.json
+```
+
+También se puede importar el fichero directamente en Postman (usa la variable de colección `baseUrl`, por defecto `http://localhost:8080`).

@@ -1,0 +1,383 @@
+{
+  "info": {
+    "name": "BCNC - Servicio de Consulta de Precios",
+    "description": "Suite de pruebas del enunciado (TestJava2026.txt) para GET /api/v1/prices, mas los casos de validacion de parametros de entrada.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Enunciado - 5 casos (producto 35455, brand 1 ZARA)",
+      "item": [
+        {
+          "name": "Test 1 - 14/06 10:00 -> tarifa 1 (35.50 EUR)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=1&productId=35455&applicationDate=2020-06-14T10:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "1" },
+                { "key": "productId", "value": "35455" },
+                { "key": "applicationDate", "value": "2020-06-14T10:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const body = pm.response.json();",
+                  "pm.test('productId = 35455', function () { pm.expect(body.productId).to.eql(35455); });",
+                  "pm.test('brandId = 1', function () { pm.expect(body.brandId).to.eql(1); });",
+                  "pm.test('priceList = 1', function () { pm.expect(body.priceList).to.eql(1); });",
+                  "pm.test('price = 35.50', function () { pm.expect(body.price).to.eql(35.50); });",
+                  "pm.test('currency = EUR', function () { pm.expect(body.currency).to.eql('EUR'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Test 2 - 14/06 16:00 -> tarifa 2 (25.45 EUR)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=1&productId=35455&applicationDate=2020-06-14T16:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "1" },
+                { "key": "productId", "value": "35455" },
+                { "key": "applicationDate", "value": "2020-06-14T16:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const body = pm.response.json();",
+                  "pm.test('priceList = 2', function () { pm.expect(body.priceList).to.eql(2); });",
+                  "pm.test('price = 25.45', function () { pm.expect(body.price).to.eql(25.45); });",
+                  "pm.test('currency = EUR', function () { pm.expect(body.currency).to.eql('EUR'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Test 3 - 14/06 21:00 -> tarifa 1 (35.50 EUR)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=1&productId=35455&applicationDate=2020-06-14T21:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "1" },
+                { "key": "productId", "value": "35455" },
+                { "key": "applicationDate", "value": "2020-06-14T21:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const body = pm.response.json();",
+                  "pm.test('priceList = 1', function () { pm.expect(body.priceList).to.eql(1); });",
+                  "pm.test('price = 35.50', function () { pm.expect(body.price).to.eql(35.50); });",
+                  "pm.test('currency = EUR', function () { pm.expect(body.currency).to.eql('EUR'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Test 4 - 15/06 10:00 -> tarifa 3 (30.50 EUR)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=1&productId=35455&applicationDate=2020-06-15T10:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "1" },
+                { "key": "productId", "value": "35455" },
+                { "key": "applicationDate", "value": "2020-06-15T10:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const body = pm.response.json();",
+                  "pm.test('priceList = 3', function () { pm.expect(body.priceList).to.eql(3); });",
+                  "pm.test('price = 30.50', function () { pm.expect(body.price).to.eql(30.50); });",
+                  "pm.test('currency = EUR', function () { pm.expect(body.currency).to.eql('EUR'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Test 5 - 16/06 21:00 -> tarifa 4 (38.95 EUR)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=1&productId=35455&applicationDate=2020-06-16T21:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "1" },
+                { "key": "productId", "value": "35455" },
+                { "key": "applicationDate", "value": "2020-06-16T21:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () { pm.response.to.have.status(200); });",
+                  "const body = pm.response.json();",
+                  "pm.test('priceList = 4', function () { pm.expect(body.priceList).to.eql(4); });",
+                  "pm.test('price = 38.95', function () { pm.expect(body.price).to.eql(38.95); });",
+                  "pm.test('currency = EUR', function () { pm.expect(body.currency).to.eql('EUR'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Validacion de parametros y errores",
+      "item": [
+        {
+          "name": "Falta brandId -> 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?productId=35455&applicationDate=2020-06-14T10:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "productId", "value": "35455" },
+                { "key": "applicationDate", "value": "2020-06-14T10:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Falta productId -> 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=1&applicationDate=2020-06-14T10:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "1" },
+                { "key": "applicationDate", "value": "2020-06-14T10:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Falta applicationDate -> 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=1&productId=35455",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "1" },
+                { "key": "productId", "value": "35455" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "brandId no positivo (0) -> 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=0&productId=35455&applicationDate=2020-06-14T10:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "0" },
+                { "key": "productId", "value": "35455" },
+                { "key": "applicationDate", "value": "2020-06-14T10:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });",
+                  "pm.test('title = Parametros de entrada invalidos', function () { pm.expect(pm.response.json().title).to.eql('Parámetros de entrada inválidos'); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "productId negativo -> 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=1&productId=-35455&applicationDate=2020-06-14T10:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "1" },
+                { "key": "productId", "value": "-35455" },
+                { "key": "applicationDate", "value": "2020-06-14T10:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "applicationDate con formato invalido -> 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=1&productId=35455&applicationDate=14-06-2020",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "1" },
+                { "key": "productId", "value": "35455" },
+                { "key": "applicationDate", "value": "14-06-2020" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 400', function () { pm.response.to.have.status(400); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sin tarifa aplicable -> 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/prices?brandId=999&productId=35455&applicationDate=2020-06-14T10:00:00",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "prices"],
+              "query": [
+                { "key": "brandId", "value": "999" },
+                { "key": "productId", "value": "35455" },
+                { "key": "applicationDate", "value": "2020-06-14T10:00:00" }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', function () { pm.response.to.have.status(404); });",
+                  "pm.test('title = Tarifa no encontrada', function () { pm.expect(pm.response.json().title).to.eql('Tarifa no encontrada'); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
