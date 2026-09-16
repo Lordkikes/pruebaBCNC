@@ -19,6 +19,13 @@ La aplicación levanta en `http://localhost:8080`. La base de datos H2 se crea e
 
 Documentación interactiva (OpenAPI/Swagger): `http://localhost:8080/swagger-ui/index.html`.
 
+### Con Docker
+
+```bash
+docker build -t prices-service .
+docker run -p 8080:8080 prices-service
+```
+
 ## Endpoint
 
 ```
