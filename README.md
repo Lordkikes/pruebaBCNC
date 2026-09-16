@@ -17,6 +17,8 @@ Servicio Spring Boot que expone un endpoint REST para consultar la tarifa y el p
 
 La aplicación levanta en `http://localhost:8080`. La base de datos H2 se crea e inicializa automáticamente (`schema.sql` + `data.sql`) con los 4 registros del enunciado para el producto `35455` / brand `1` (ZARA).
 
+Documentación interactiva (OpenAPI/Swagger): `http://localhost:8080/swagger-ui/index.html`.
+
 ## Endpoint
 
 ```
