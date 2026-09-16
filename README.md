@@ -67,14 +67,26 @@ curl "http://localhost:8080/api/v1/prices?brandId=1&productId=35455&applicationD
 ```json
 {
   "type": "about:blank",
-  "title": "Bad Request",
+  "title": "Parámetro con formato inválido",
   "status": 400,
-  "detail": "Failed to convert 'applicationDate' with value: '14-06-2020'",
+  "detail": "El parámetro 'applicationDate' con valor '14-06-2020' no es válido: se esperaba una fecha/hora en formato ISO-8601 (yyyy-MM-dd'T'HH:mm:ss), p. ej. 2020-06-14T10:00:00.",
   "instance": "/api/v1/prices"
 }
 ```
 
-Si falta cualquiera de los tres parámetros (`brandId`, `productId` o `applicationDate`), la respuesta es igualmente **400 Bad Request**.
+Lo mismo aplica si `brandId`/`productId` no son numéricos (`se esperaba un número entero`).
+
+Si falta cualquiera de los tres parámetros, la respuesta es **400 Bad Request** indicando cuál falta:
+
+```json
+{
+  "type": "about:blank",
+  "title": "Falta un parámetro obligatorio",
+  "status": 400,
+  "detail": "El parámetro obligatorio 'brandId' no fue proporcionado.",
+  "instance": "/api/v1/prices"
+}
+```
 
 ### Identificadores no válidos (`brandId`/`productId` ≤ 0)
 
@@ -83,7 +95,7 @@ Si falta cualquiera de los tres parámetros (`brandId`, `productId` o `applicati
   "type": "about:blank",
   "title": "Parámetros de entrada inválidos",
   "status": 400,
-  "detail": "getApplicablePrice.brandId: debe ser mayor que 0",
+  "detail": "'brandId' debe ser mayor que 0",
   "instance": "/api/v1/prices"
 }
 ```
