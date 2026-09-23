@@ -14,13 +14,9 @@ spring:
   sql:
     init:
       mode: always
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
   mvc:
     problemdetails:
       enabled: true
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
