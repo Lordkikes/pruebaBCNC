@@ -103,6 +103,18 @@ docker build -t prices-service .
 docker run -p 8080:8080 prices-service
 ```
 
+## Configuración
+
+- **`application.yml`**: configuración base, la misma en cualquier sitio donde corra el servicio (local, tests, Docker). El datasource H2 en memoria vive aquí porque el enunciado lo exige en todos los casos — no es una particularidad de un entorno concreto, así que no tiene sentido moverlo a un perfil.
+- **`application-local.yml`**: solo lo que tiene sentido exclusivamente en el puesto de un desarrollador — la consola web de H2 (`/h2-console`), **deshabilitada por defecto** (antes estaba siempre activa, también en Docker/CI). Se activa explícitamente:
+
+  ```bash
+  ./mvnw spring-boot:run -Dspring-boot.run.profiles=local
+  ```
+
+- **`server.port: ${SERVER_PORT:8080}`**: admite override por variable de entorno en vez de quedar fijo — necesario para desplegar detrás de un orquestador que asigna el puerto (`SERVER_PORT=9090 ./mvnw spring-boot:run`).
+- **`spring.datasource.password` vacío, a propósito**: es la base H2 en memoria del enunciado (usuario `sa`, sin persistencia entre arranques, sin datos sensibles) — no hay nada que proteger ni que externalizar a un secreto en este caso concreto.
+
 ## Endpoint
 
 ```
