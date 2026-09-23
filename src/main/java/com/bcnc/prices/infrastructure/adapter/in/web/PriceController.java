@@ -47,9 +47,9 @@ public class PriceController {
     @GetMapping("/api/v1/prices")
     public PriceResponse getApplicablePrice(
             @Parameter(description = "Identificador de la cadena (brand)", example = "1")
-            @RequestParam("brandId") @NotNull @Positive Long brandId,
+            @RequestParam("brandId") @NotNull @Positive(message = "debe ser mayor que 0") Long brandId,
             @Parameter(description = "Identificador del producto", example = "35455")
-            @RequestParam("productId") @NotNull @Positive Long productId,
+            @RequestParam("productId") @NotNull @Positive(message = "debe ser mayor que 0") Long productId,
             @Parameter(description = "Fecha/hora de aplicación en formato ISO-8601", example = "2020-06-14T10:00:00")
             @RequestParam("applicationDate")
             @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) @NotNull LocalDateTime applicationDate
