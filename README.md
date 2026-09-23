@@ -35,8 +35,9 @@ com.bcnc.prices
 │
 └── infrastructure               detalles técnicos, implementan los puertos
     ├── adapter/in/web           adaptador de entrada (HTTP)
-    │   ├── PriceController          traduce HTTP → llamada al caso de uso → DTO
-    │   └── PriceExceptionHandler    traduce excepciones → respuestas ProblemDetail
+    │   ├── PriceController                       traduce HTTP → llamada al caso de uso → DTO
+    │   ├── DomainExceptionHandler                errores de negocio (dominio) → ProblemDetail
+    │   └── RequestValidationExceptionHandler      peticiones mal formadas → ProblemDetail 400
     ├── adapter/out/persistence  adaptador de salida (H2/JPA)
     │   ├── PriceEntity               mapeo JPA de la tabla `prices`
     │   ├── PriceJpaRepository        repositorio Spring Data (la consulta real)
@@ -68,7 +69,7 @@ PriceRepositoryAdapter      (infrastructure/adapter/out/persistence)
 PriceQueryService
   │  6. Si no hay resultado, lanza PriceNotFoundException (error de dominio)
   ▼
-PriceController / PriceExceptionHandler
+PriceController / DomainExceptionHandler / RequestValidationExceptionHandler
   │  7. Éxito → mapea Price a PriceResponse (DTO) → 200 OK
   │     Error  → mapea la excepción a ProblemDetail → 400/404
   ▼
@@ -82,6 +83,7 @@ Cliente
 - **Errores como `ProblemDetail` (RFC 7807)** en todos los casos (parámetro ausente, mal formado, no positivo, o sin tarifa aplicable): un único formato de error estándar y autodescriptivo, en vez de una estructura ad-hoc distinta por cada caso.
 - **`schema.sql` + `data.sql`, no Flyway**: el enunciado pide un dataset fijo cargado al arrancar. Flyway resuelve versionar cambios de esquema en el tiempo — introducirlo aquí sería complejidad sin beneficio real para este alcance.
 - **Un único módulo Maven con paquetes**, no módulos separados por capa: la arquitectura hexagonal no exige artefactos Maven distintos: los límites entre capas se imponen con visibilidad de paquete y se verifican con ArchUnit, sin la sobrecarga de gestionar varios `pom.xml`.
+- **`DomainExceptionHandler` y `RequestValidationExceptionHandler` separados** (antes una sola clase): traducir un error de negocio (`PriceNotFoundException`) y traducir una petición HTTP mal formada son responsabilidades con razones de cambio distintas — la primera cambia con el vocabulario de dominio, la segunda con las reglas de entrada del endpoint (SRP).
 
 ## Arrancar la aplicación
 
