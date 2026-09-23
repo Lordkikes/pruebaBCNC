@@ -20,6 +20,6 @@ public class PriceQueryService implements GetApplicablePriceUseCase {
     @Override
     public Price getApplicablePrice(Long brandId, Long productId, LocalDateTime applicationDate) {
         return priceRepositoryPort.findApplicablePrice(brandId, productId, applicationDate)
-                .orElseThrow(() -> new PriceNotFoundException(brandId, productId, applicationDate.toString()));
+                .orElseThrow(() -> new PriceNotFoundException(brandId, productId, applicationDate));
     }
 }

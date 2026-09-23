@@ -8,6 +8,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
+
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -130,7 +132,7 @@ class PriceControllerValidationTest {
     @Test
     void sinTarifaAplicableParaLosParametros_devuelve404ConElMensajeDeDominio() throws Exception {
         when(getApplicablePriceUseCase.getApplicablePrice(eq(999L), eq(35455L), any()))
-                .thenThrow(new PriceNotFoundException(999L, 35455L, "2020-06-14T10:00"));
+                .thenThrow(new PriceNotFoundException(999L, 35455L, LocalDateTime.of(2020, 6, 14, 10, 0)));
 
         mockMvc.perform(get("/api/v1/prices")
                         .param("brandId", "999")
