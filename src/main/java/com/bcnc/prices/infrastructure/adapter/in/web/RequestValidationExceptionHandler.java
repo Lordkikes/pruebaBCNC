@@ -1,36 +1,34 @@
 package com.bcnc.prices.infrastructure.adapter.in.web;
 
-import com.bcnc.prices.domain.exception.PriceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 /**
- * @Order(HIGHEST_PRECEDENCE): sin esto, el ProblemDetailsExceptionHandler
- * autoconfigurado por Spring Boot (spring.mvc.problemdetails.enabled=true) se
- * resuelve antes que este advice para MissingServletRequestParameterException/
- * MethodArgumentTypeMismatchException y devuelve su mensaje genérico en vez del
- * nuestro, aunque este @ExceptionHandler exista.
+ * Traduce peticiones HTTP mal formadas (parámetro ausente, con formato
+ * incorrecto, o que viola una constraint de validación) a 400 Bad Request.
+ * Cambia cuando cambian las reglas de entrada del endpoint, no cuando cambia
+ * el vocabulario de negocio — ver {@link DomainExceptionHandler}.
+ *
+ * <p>{@code @Order(HIGHEST_PRECEDENCE)}: sin esto, el
+ * {@code ProblemDetailsExceptionHandler} autoconfigurado por Spring Boot
+ * ({@code spring.mvc.problemdetails.enabled=true}) resuelve antes que este
+ * advice para {@link MissingServletRequestParameterException} y
+ * {@link MethodArgumentTypeMismatchException}, devolviendo su mensaje
+ * genérico en vez del nuestro.
  */
 @RestControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
-public class PriceExceptionHandler {
-
-    @ExceptionHandler(PriceNotFoundException.class)
-    public ProblemDetail handlePriceNotFound(PriceNotFoundException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problem.setTitle("Tarifa no encontrada");
-        return problem;
-    }
+public class RequestValidationExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ProblemDetail handleConstraintViolation(ConstraintViolationException ex) {
