@@ -198,7 +198,22 @@ Ver los casos cubiertos en [`PriceControllerValidationTest`](src/test/java/com/b
 ./mvnw test
 ```
 
-Incluye los 5 tests de integración exigidos por el enunciado (`PriceControllerIntegrationTest`), uno por cada franja horaria: 14/06 10:00, 14/06 16:00, 14/06 21:00, 15/06 10:00 y 16/06 21:00.
+41 tests, cada uno aislado en la capa que le corresponde:
+
+| Capa | Clase | Qué verifica |
+|---|---|---|
+| Dominio | `PriceTest` | `Price` rechaza cada campo obligatorio nulo (parametrizado); no depende de Spring. |
+| Aplicación | `PriceQueryServiceTest` | `PriceQueryService` delega en el puerto de salida y traduce "no encontrado" a `PriceNotFoundException`; puerto mockeado con Mockito. |
+| Persistencia — query | `PriceJpaRepositoryTest` | La consulta real contra H2 (`@DataJpaTest`): desambiguación por `PRIORITY` cuando dos rangos solapan, inclusión/exclusión exacta de los bordes `start_date`/`end_date` (un segundo antes/después), y que nunca mezcla resultados de otra cadena o producto. |
+| Persistencia — mapeo | `PriceEntityMapperTest`, `PriceRepositoryAdapterTest` | El adaptador delega correctamente y mapea `PriceEntity` ↔ `Price`; repositorio JPA mockeado. |
+| Web — casos del enunciado | `PriceControllerIntegrationTest` | Los 5 escenarios exigidos, verificando el cuerpo completo de la respuesta (no solo el status). |
+| Web — validación y errores | `PriceControllerValidationTest` | `@WebMvcTest` con el caso de uso mockeado: cada error verifica `title`/`detail` exactos (no solo el código HTTP), incluye parámetros no numéricos, y comprueba que la validación falla *antes* de invocar el caso de uso. |
+| Arquitectura | `HexagonalArchitectureTest` | Las reglas de dependencia entre capas se cumplen de verdad (ArchUnit), no solo por convención. |
+| Contexto | `PricesServiceApplicationTests` | La aplicación arranca con el cableado real de todos los beans. |
+
+**Por qué `PriceJpaRepositoryTest` es la incorporación más relevante**: la regla de negocio "gana la tarifa de mayor `PRIORITY`" y la inclusión de los bordes de fecha viven enteramente en la query de `PriceJpaRepository` — antes de este test, esa lógica solo se ejercitaba de forma indirecta a través del dataset fijo del enunciado en los tests de integración HTTP, sin ningún caso construido a propósito para los bordes exactos ni para un empate de prioridad aislado del resto del stack.
+
+**Un bug real que encontró este trabajo**: `@Positive` usaba el mensaje de validación por defecto de Hibernate Validator, que se interpola según el locale por defecto de la JVM — en español al ejecutar la app directamente, en inglés bajo `mvnw test` (Surefire fija `user.language=en` en el JVM forkeado). El test anterior nunca lo detectó porque solo comprobaba el código HTTP, no el cuerpo. Se corrigió fijando el mensaje explícitamente (`@Positive(message = "debe ser mayor que 0")`) para que la respuesta de la API no dependa de en qué máquina se ejecute.
 
 ## Colección Postman
 
