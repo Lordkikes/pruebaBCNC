@@ -2,6 +2,7 @@ package com.bcnc.prices.domain.model;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.math.BigDecimal;
@@ -35,24 +36,24 @@ class PriceTest {
         assertThat(price.currency()).isEqualTo(CURRENCY);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] campo obligatorio nulo: {0}")
     @MethodSource("camposObligatoriosNulos")
-    void rechazaCamposObligatoriosNulos(Long brandId, Long productId, Long priceList,
+    void rechazaCamposObligatoriosNulos(String campoNulo, Long brandId, Long productId, Long priceList,
                                          LocalDateTime start, LocalDateTime end,
                                          BigDecimal amount, String currency) {
         assertThatNullPointerException().isThrownBy(() ->
                 new Price(brandId, productId, priceList, 0, start, end, amount, currency));
     }
 
-    private static Stream<org.junit.jupiter.params.provider.Arguments> camposObligatoriosNulos() {
+    private static Stream<Arguments> camposObligatoriosNulos() {
         return Stream.of(
-                org.junit.jupiter.params.provider.Arguments.of(null, PRODUCT_ID, PRICE_LIST, START, END, AMOUNT, CURRENCY),
-                org.junit.jupiter.params.provider.Arguments.of(BRAND_ID, null, PRICE_LIST, START, END, AMOUNT, CURRENCY),
-                org.junit.jupiter.params.provider.Arguments.of(BRAND_ID, PRODUCT_ID, null, START, END, AMOUNT, CURRENCY),
-                org.junit.jupiter.params.provider.Arguments.of(BRAND_ID, PRODUCT_ID, PRICE_LIST, null, END, AMOUNT, CURRENCY),
-                org.junit.jupiter.params.provider.Arguments.of(BRAND_ID, PRODUCT_ID, PRICE_LIST, START, null, AMOUNT, CURRENCY),
-                org.junit.jupiter.params.provider.Arguments.of(BRAND_ID, PRODUCT_ID, PRICE_LIST, START, END, null, CURRENCY),
-                org.junit.jupiter.params.provider.Arguments.of(BRAND_ID, PRODUCT_ID, PRICE_LIST, START, END, AMOUNT, null)
+                Arguments.of("brandId", null, PRODUCT_ID, PRICE_LIST, START, END, AMOUNT, CURRENCY),
+                Arguments.of("productId", BRAND_ID, null, PRICE_LIST, START, END, AMOUNT, CURRENCY),
+                Arguments.of("priceList", BRAND_ID, PRODUCT_ID, null, START, END, AMOUNT, CURRENCY),
+                Arguments.of("startDate", BRAND_ID, PRODUCT_ID, PRICE_LIST, null, END, AMOUNT, CURRENCY),
+                Arguments.of("endDate", BRAND_ID, PRODUCT_ID, PRICE_LIST, START, null, AMOUNT, CURRENCY),
+                Arguments.of("price", BRAND_ID, PRODUCT_ID, PRICE_LIST, START, END, null, CURRENCY),
+                Arguments.of("currency", BRAND_ID, PRODUCT_ID, PRICE_LIST, START, END, AMOUNT, null)
         );
     }
 }
