@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
@@ -124,8 +125,9 @@ class PriceJpaRepositoryTest {
     private Optional<PriceEntity> findAt(Long brandId, Long productId, String applicationDate) {
         LocalDateTime date = LocalDateTime.parse(applicationDate);
         return priceJpaRepository
-                .findFirstByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
-                        brandId, productId, date, date);
+                .findApplicableCandidates(brandId, productId, date, PageRequest.of(0, 1))
+                .stream()
+                .findFirst();
     }
 
     private void persist(PriceEntity entity) {

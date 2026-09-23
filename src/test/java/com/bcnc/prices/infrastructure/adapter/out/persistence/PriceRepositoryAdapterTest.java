@@ -5,10 +5,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,7 +19,8 @@ import static org.mockito.Mockito.when;
 
 /**
  * Unitario del adaptador de salida: PriceJpaRepository mockeado, sin levantar
- * Spring ni H2. Verifica que delega con los mismos parámetros y mapea el
+ * Spring ni H2. Verifica que delega con los mismos parámetros, que pide
+ * explícitamente un único resultado (PageRequest.of(0, 1)) y que mapea el
  * resultado a dominio.
  */
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +29,7 @@ class PriceRepositoryAdapterTest {
     private static final Long BRAND_ID = 1L;
     private static final Long PRODUCT_ID = 35455L;
     private static final LocalDateTime APPLICATION_DATE = LocalDateTime.of(2020, 6, 14, 10, 0);
+    private static final PageRequest TOP_MATCH_ONLY = PageRequest.of(0, 1);
 
     @Mock
     private PriceJpaRepository priceJpaRepository;
@@ -42,9 +46,8 @@ class PriceRepositoryAdapterTest {
         ReflectionTestUtils.setField(entity, "price", new BigDecimal("35.50"));
         ReflectionTestUtils.setField(entity, "curr", "EUR");
 
-        when(priceJpaRepository.findFirstByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
-                BRAND_ID, PRODUCT_ID, APPLICATION_DATE, APPLICATION_DATE))
-                .thenReturn(Optional.of(entity));
+        when(priceJpaRepository.findApplicableCandidates(BRAND_ID, PRODUCT_ID, APPLICATION_DATE, TOP_MATCH_ONLY))
+                .thenReturn(List.of(entity));
 
         PriceRepositoryAdapter adapter = new PriceRepositoryAdapter(priceJpaRepository);
         Optional<Price> result = adapter.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE);
@@ -54,15 +57,13 @@ class PriceRepositoryAdapterTest {
         assertThat(result.get().price()).isEqualByComparingTo("35.50");
 
         verify(priceJpaRepository)
-                .findFirstByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
-                        BRAND_ID, PRODUCT_ID, APPLICATION_DATE, APPLICATION_DATE);
+                .findApplicableCandidates(BRAND_ID, PRODUCT_ID, APPLICATION_DATE, TOP_MATCH_ONLY);
     }
 
     @Test
     void devuelveOptionalVacioCuandoElRepositorioJpaNoEncuentraNada() {
-        when(priceJpaRepository.findFirstByBrandIdAndProductIdAndStartDateLessThanEqualAndEndDateGreaterThanEqualOrderByPriorityDesc(
-                BRAND_ID, PRODUCT_ID, APPLICATION_DATE, APPLICATION_DATE))
-                .thenReturn(Optional.empty());
+        when(priceJpaRepository.findApplicableCandidates(BRAND_ID, PRODUCT_ID, APPLICATION_DATE, TOP_MATCH_ONLY))
+                .thenReturn(List.of());
 
         PriceRepositoryAdapter adapter = new PriceRepositoryAdapter(priceJpaRepository);
         Optional<Price> result = adapter.findApplicablePrice(BRAND_ID, PRODUCT_ID, APPLICATION_DATE);
