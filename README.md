@@ -78,7 +78,8 @@ Cliente
 
 ## Decisiones técnicas y por qué
 
-- **La desambiguación por `PRIORITY` se resuelve en la propia consulta**, no cargando todas las filas y filtrando en Java: `PriceJpaRepository` usa una query derivada que filtra por `brandId`/`productId`/rango de fechas y ordena por `priority` descendente, devolviendo un único resultado desde la base de datos. Es el criterio de "eficiencia de la extracción de datos" del enunciado, y evita traer a memoria datos que no hacen falta.
+- **La desambiguación por `PRIORITY` se resuelve en la propia consulta**, no cargando todas las filas y filtrando en Java: `PriceJpaRepository.findApplicableCandidates` filtra por `brandId`/`productId`/rango de fechas y ordena por `priority` descendente; el adaptador pide explícitamente `PageRequest.of(0, 1)`, por lo que la base de datos aplica un `LIMIT 1` real (`fetch first 1 rows only` en el SQL generado). Es el criterio de "eficiencia de la extracción de datos" del enunciado, y evita traer a memoria datos que no hacen falta.
+  - Se usa una `@Query` JPQL explícita con `Pageable` en vez de un método derivado por convención de nombres (`findFirstBy...OrderByPriorityDesc`): el nombre derivado que hacía exactamente esto medía más de 100 caracteres y filtraba en el propio nombre del método el detalle de "cómo" se implementa la query — más difícil de leer que la query misma.
 - **`BigDecimal` para `price`**, nunca `double`/`float`: dinero no puede perder precisión por redondeo de coma flotante.
 - **Errores como `ProblemDetail` (RFC 7807)** en todos los casos (parámetro ausente, mal formado, no positivo, o sin tarifa aplicable): un único formato de error estándar y autodescriptivo, en vez de una estructura ad-hoc distinta por cada caso.
 - **`schema.sql` + `data.sql`, no Flyway**: el enunciado pide un dataset fijo cargado al arrancar. Flyway resuelve versionar cambios de esquema en el tiempo — introducirlo aquí sería complejidad sin beneficio real para este alcance.
